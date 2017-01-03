@@ -2,7 +2,7 @@ import React from 'react';
 
 const MessageData = props => {
   return (
-  <div key={ props.key }>
+  <div>
     <p>{ props.body }</p>
   </div>
   );

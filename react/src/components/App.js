@@ -8,18 +8,30 @@ class App extends Component {
       input: '',
       messages: []
     }
+    this.getMessages = this.getMessages.bind(this);
     this.handleInput = this.handleInput.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  getMessages() {
+    $.ajax({
+      url: "api/messages",
+      method: "GET"
+    })
+    .done(data => {
+      this.setState({ messages: data.messages });
+    });
   }
 
   handleSubmit() {
     $.ajax({
       url: '/api/messages',
+      method: 'POST',
       data: {
         message: this.state.input
       },
       success: function(data) {
-        this.setState({ messages: data.messages })
+        this.setState({ messages: data.messages, input: "" })
       }.bind(this),
       error: function(data) {
       }.bind(this),
@@ -35,6 +47,11 @@ class App extends Component {
     this.setState( shift )
   }
 
+  componentDidMount() {
+    setInterval(this.getMessages, 1000)
+  }
+
+
   render() {
     let showMessages = this.state.messages.map(messageData => {
         return (
@@ -47,20 +64,17 @@ class App extends Component {
       });
     return(
       <div>
-      <form onSubmit={this.handleSubmit}>
         <input
           type="text"
           name='input'
-          value={ this.state.input }
+          value={this.state.input}
           placeholder="Chat here"
-          onChange={ this.handleInput }
+          onChange={this.handleInput}
           required
         />
-        <input type="submit"/>
-        </form>
-        { showMessages }
+        <button onClick={this.handleSubmit}>Submit</button>
+        {showMessages}
       </div>
-
     )
   };
 };
